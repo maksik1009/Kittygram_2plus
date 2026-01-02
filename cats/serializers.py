@@ -27,7 +27,7 @@ class CatSerializer(serializers.ModelSerializer):
     achievements = AchievementSerializer(many=True, required=False)
     color = serializers.ChoiceField(choices=CHOICES)
     age = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Cat
         fields = ('id', 'name', 'color', 'birth_year', 'achievements', 'owner',
@@ -50,3 +50,20 @@ class CatSerializer(serializers.ModelSerializer):
                 AchievementCat.objects.create(
                     achievement=current_achievement, cat=cat)
             return cat
+
+    def update(self, instance, validated_data):
+        # 1. Извлекаем данные достижений, если они есть в PATCH-запросе
+        achievements_data = validated_data.pop('achievements', None)
+
+        # 2. Обновляем поля самого котика (имя, цвет и т.д.)
+        instance = super().update(instance, validated_data)
+
+        # 3. Если достижения переданы, обновляем связи
+        if achievements_data is not None:
+            instance.achievements.clear() # Удаляем старые связи котика с достижениями
+            for ach in achievements_data:
+                # Находим достижение по имени или создаем новое
+                current_ach, _ = Achievement.objects.get_or_create(**ach)
+                instance.achievements.add(current_ach)
+
+        return instance
