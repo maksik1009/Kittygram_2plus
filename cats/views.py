@@ -1,7 +1,7 @@
 from rest_framework import viewsets, throttling, filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Achievement, Cat, Users
+from .models import Achievement, Cat, User
 from .permissions import OwnerOrReadOnly
 from .serializers import AchievementSerializer, CatSerializer, UserSerializer
 from .throttling import WorkingHoursRateThrottle

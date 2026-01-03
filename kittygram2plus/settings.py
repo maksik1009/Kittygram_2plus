@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_filters',
     'djoser',
     'cats.apps.CatsConfig',
+    # 'drf_yasg',  # import drf-yasg
 ]
 
 MIDDLEWARE = [
